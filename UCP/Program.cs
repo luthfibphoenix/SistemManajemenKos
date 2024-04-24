@@ -428,7 +428,7 @@ namespace SistemManajemenKos
             using (SqlCommand cmd = new SqlCommand(deleteQuery, conn))
             {
                 cmd.Parameters.AddWithValue("@ID", id);
-
+                
                 int rowsAffected = cmd.ExecuteNonQuery();
                 Console.WriteLine($"{rowsAffected} data pembayaran berhasil dihapus.");
             }
