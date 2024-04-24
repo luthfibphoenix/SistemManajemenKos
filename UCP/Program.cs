@@ -438,7 +438,7 @@ namespace SistemManajemenKos
         {
             string query = "SELECT COUNT(*) FROM PenghuniKos WHERE ID = @ID;";
             using (SqlCommand cmd = new SqlCommand(query, conn))
-            {
+            { 
                 cmd.Parameters.AddWithValue("@ID", idPenghuni);
 
                 int count = (int)cmd.ExecuteScalar();
