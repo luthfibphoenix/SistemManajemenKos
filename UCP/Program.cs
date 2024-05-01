@@ -287,7 +287,6 @@ namespace SistemManajemenKos
             }
         }
 
-
         private void EditPenghuni(SqlConnection conn)
         {
             Console.Write("Masukkan ID Penghuni yang ingin diedit: ");
@@ -386,8 +385,8 @@ namespace SistemManajemenKos
             Console.Write("Masukkan ID Kamar yang ingin dihapus: ");
             int id = Convert.ToInt32(Console.ReadLine());
 
-            string deleteQuery = "DELETE FROM KamarKos WHERE ID = @ID;";
-            using (SqlCommand cmd = new SqlCommand(deleteQuery, conn))
+            string deleteKamarQuery = "DELETE FROM KamarKos WHERE ID = @ID;";
+            using (SqlCommand cmd = new SqlCommand(deleteKamarQuery, conn))
             {
                 cmd.Parameters.AddWithValue("@ID", id);
 
@@ -403,7 +402,7 @@ namespace SistemManajemenKos
 
             Console.Write("Masukkan nomor kamar baru: ");
             string nomorKamar = Console.ReadLine();
-            Console.Write("Masukkan harga kamar baru: ");
+            Console.Write("Masukkan harga baru: ");
             int harga = Convert.ToInt32(Console.ReadLine());
 
             string updateQuery = "UPDATE KamarKos SET NomorKamar = @NomorKamar, Harga = @Harga WHERE ID = @ID;";
@@ -427,8 +426,9 @@ namespace SistemManajemenKos
                 Console.WriteLine("1. Tampilkan Data Pembayaran");
                 Console.WriteLine("2. Tambah Data Pembayaran");
                 Console.WriteLine("3. Hapus Data Pembayaran");
-                Console.WriteLine("4. Kembali ke Menu Utama");
-                Console.Write("\nMasukkan pilihan (1-4): ");
+                Console.WriteLine("4. Edit Data Pembayaran");
+                Console.WriteLine("5. Kembali ke Menu Utama");
+                Console.Write("\nMasukkan pilihan (1-5): ");
                 char choice = Convert.ToChar(Console.ReadLine());
 
                 switch (choice)
@@ -443,6 +443,9 @@ namespace SistemManajemenKos
                         DeletePembayaranData(conn);
                         break;
                     case '4':
+                        EditPembayaranData(conn);
+                        break;
+                    case '5':
                         Console.Clear();
                         return;
                     default:
@@ -506,41 +509,62 @@ namespace SistemManajemenKos
             }
         }
 
-        private void SearchData(SqlConnection conn)
+        private void EditPembayaranData(SqlConnection conn)
         {
-            Console.Clear();
-            while (true)
-            {
-                Console.WriteLine("\nMenu Pencarian Data");
-                Console.WriteLine("1. Cari Data Penghuni Kos");
-                Console.WriteLine("2. Cari Data Kamar Kos");
-                Console.WriteLine("3. Cari Data Pembayaran");
-                Console.WriteLine("4. Kembali ke Menu Utama");
-                Console.Write("\nMasukkan pilihan (1-4): ");
-                char choice = Convert.ToChar(Console.ReadLine());
+            Console.Write("Masukkan ID Pembayaran yang ingin diedit: ");
+            int id = Convert.ToInt32(Console.ReadLine());
 
-                switch (choice)
-                {
-                    case '1':
-                        SearchPenghuniData(conn);
-                        break;
-                    case '2':
-                        SearchKamarData(conn);
-                        break;
-                    case '3':
-                        SearchPembayaranData(conn);
-                        break;
-                    case '4':
-                        Console.Clear();
-                        return;
-                    default:
-                        Console.WriteLine("Pilihan tidak valid");
-                        break;
-                }
+            Console.Write("Masukkan ID Penghuni baru: ");
+            int idPenghuni = Convert.ToInt32(Console.ReadLine());
+            Console.Write("Masukkan bulan baru: ");
+            string bulan = Console.ReadLine();
+            Console.Write("Masukkan tahun baru: ");
+            int tahun = Convert.ToInt32(Console.ReadLine());
+            Console.Write("Masukkan jumlah baru: ");
+            int jumlah = Convert.ToInt32(Console.ReadLine());
+
+            string updateQuery = "UPDATE Pembayaran SET IDPenghuni = @IDPenghuni, Bulan = @Bulan, Tahun = @Tahun, Jumlah = @Jumlah WHERE ID = @ID;";
+            using (SqlCommand cmd = new SqlCommand(updateQuery, conn))
+            {
+                cmd.Parameters.AddWithValue("@IDPenghuni", idPenghuni);
+                cmd.Parameters.AddWithValue("@Bulan", bulan);
+                cmd.Parameters.AddWithValue("@Tahun", tahun);
+                cmd.Parameters.AddWithValue("@Jumlah", jumlah);
+                cmd.Parameters.AddWithValue("@ID", id);
+
+                int rowsAffected = cmd.ExecuteNonQuery();
+                Console.WriteLine($"{rowsAffected} data pembayaran berhasil diubah.");
             }
         }
 
-        private void SearchPenghuniData(SqlConnection conn)
+        private void SearchData(SqlConnection conn)
+        {
+            Console.Clear();
+            Console.WriteLine("Menu Pencarian Data");
+            Console.WriteLine("1. Cari Data Penghuni Berdasarkan Nama");
+            Console.WriteLine("2. Cari Data Kamar Berdasarkan Nomor Kamar");
+            Console.WriteLine("3. Kembali ke Menu Utama");
+            Console.Write("\nMasukkan pilihan (1-3): ");
+            char choice = Convert.ToChar(Console.ReadLine());
+
+            switch (choice)
+            {
+                case '1':
+                    SearchPenghuni(conn);
+                    break;
+                case '2':
+                    SearchKamar(conn);
+                    break;
+                case '3':
+                    Console.Clear();
+                    break;
+                default:
+                    Console.WriteLine("Pilihan tidak valid");
+                    break;
+            }
+        }
+
+        private void SearchPenghuni(SqlConnection conn)
         {
             Console.Write("Masukkan nama penghuni yang ingin dicari: ");
             string nama = Console.ReadLine();
@@ -559,7 +583,7 @@ namespace SistemManajemenKos
             }
         }
 
-        private void SearchKamarData(SqlConnection conn)
+        private void SearchKamar(SqlConnection conn)
         {
             Console.Write("Masukkan nomor kamar yang ingin dicari: ");
             string nomorKamar = Console.ReadLine();
@@ -575,84 +599,6 @@ namespace SistemManajemenKos
                     Console.WriteLine($"ID: {reader["ID"]}, Nomor Kamar: {reader["NomorKamar"]}, Harga: {reader["Harga"]}");
                 }
                 reader.Close();
-            }
-        }
-
-        private void SearchPembayaranData(SqlConnection conn)
-        {
-            Console.Write("Masukkan bulan pembayaran yang ingin dicari: ");
-            string bulan = Console.ReadLine();
-
-            string query = "SELECT * FROM Pembayaran WHERE Bulan LIKE @Bulan;";
-            using (SqlCommand cmd = new SqlCommand(query, conn))
-            {
-                cmd.Parameters.AddWithValue("@Bulan", "%" + bulan + "%");
-
-                SqlDataReader reader = cmd.ExecuteReader();
-                while (reader.Read())
-                {
-                    Console.WriteLine($"ID: {reader["ID"]}, ID Penghuni: {reader["IDPenghuni"]}, Bulan: {reader["Bulan"]}, Tahun: {reader["Tahun"]}, Jumlah: {reader["Jumlah"]}");
-                }
-                reader.Close();
-            }
-        }
-
-        private void EditData(SqlConnection conn)
-        {
-            Console.Clear();
-            while (true)
-            {
-                Console.WriteLine("\nMenu Edit Data");
-                Console.WriteLine("1. Edit Data Penghuni Kos");
-                Console.WriteLine("2. Edit Data Kamar Kos");
-                Console.WriteLine("3. Edit Data Pembayaran");
-                Console.WriteLine("4. Kembali ke Menu Utama");
-                Console.Write("\nMasukkan pilihan (1-4): ");
-                char choice = Convert.ToChar(Console.ReadLine());
-
-                switch (choice)
-                {
-                    case '1':
-                        EditPenghuni(conn);
-                        break;
-                    case '2':
-                        EditKamar(conn);
-                        break;
-                    case '3':
-                        EditPembayaranData(conn);
-                        break;
-                    case '4':
-                        Console.Clear();
-                        return;
-                    default:
-                        Console.WriteLine("Pilihan tidak valid");
-                        break;
-                }
-            }
-        }
-
-        private void EditPembayaranData(SqlConnection conn)
-        {
-            Console.Write("Masukkan ID Pembayaran yang ingin diedit: ");
-            int idPembayaran = Convert.ToInt32(Console.ReadLine());
-
-            Console.Write("Masukkan bulan pembayaran baru: ");
-            string bulan = Console.ReadLine();
-            Console.Write("Masukkan tahun pembayaran baru: ");
-            int tahun = Convert.ToInt32(Console.ReadLine());
-            Console.Write("Masukkan jumlah pembayaran baru: ");
-            int jumlah = Convert.ToInt32(Console.ReadLine());
-
-            string updateQuery = "UPDATE Pembayaran SET Bulan = @Bulan, Tahun = @Tahun, Jumlah = @Jumlah WHERE ID = @ID;";
-            using (SqlCommand cmd = new SqlCommand(updateQuery, conn))
-            {
-                cmd.Parameters.AddWithValue("@Bulan", bulan);
-                cmd.Parameters.AddWithValue("@Tahun", tahun);
-                cmd.Parameters.AddWithValue("@Jumlah", jumlah);
-                cmd.Parameters.AddWithValue("@ID", idPembayaran);
-
-                int rowsAffected = cmd.ExecuteNonQuery();
-                Console.WriteLine($"{rowsAffected} data pembayaran berhasil diubah.");
             }
         }
     }
