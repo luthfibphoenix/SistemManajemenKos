@@ -412,7 +412,7 @@ namespace SistemManajemenKos
             }
         }
 
-        private void DeleteKamarData(SqlConnection conn)
+        private void DeleteKamarData(SqlConnection conn) 
         {
             Console.Write("Masukkan ID Kamar yang ingin dihapus: ");
             int id = Convert.ToInt32(Console.ReadLine());
